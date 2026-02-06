@@ -1,0 +1,23 @@
+[project]
+name = "ppp-publish"
+version = "0.1.0"
+description = "Publish-ready feature pipeline"
+readme = "publish/README.md"
+requires-python = ">=3.13"
+dependencies = [
+  "numpy>=2.3.4",
+  "pandas>=2.3.3",
+  "pyarrow>=22.0.0",
+  "spacy[lookups]>=3.8.0",
+]
+
+[project.optional-dependencies]
+# Needed only if you want .xlsx output
+excel = ["openpyxl>=3.1.5"]
+
+# Needed only if you want SBERT-based semantic similarity features.
+# If not installed, the pipeline will continue and fill those columns with NaN.
+sbert = [
+  "sentence-transformers>=5.1.2",
+  "torch",
+]
