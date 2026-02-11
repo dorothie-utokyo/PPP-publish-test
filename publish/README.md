@@ -8,14 +8,45 @@ From the repo root, using the project’s `uv` environment:
 uv run python -m publish.run_pipeline \
   --input /path/to/input_pairs.parquet \
   --output-dir publish_outputs \
-  --ipc-technology-xlsx /path/to/ipc_technology.xlsx
+  --ipc-technology-xlsx /path/to/ipc_technology.xlsx \
+  --control-root /path/to/control_root
 ```
 
 Outputs written to `--output-dir`:
 
-- `final_features.parquet`
-- `final_features.csv`
-- `final_features.xlsx` (requires `openpyxl`)
+- Always written:
+  - `final_features.parquet`
+  - `final_features.csv`
+  - `final_features.xlsx` (requires `openpyxl`)
+- Also written when `--control-root` is provided:
+  - `final_features_control_combined_y0.{parquet,csv,xlsx}`
+  - `final_features_control_combined_y5.{parquet,csv,xlsx}`
+  - `final_features_control_noselfcite_combined_y0.{parquet,csv,xlsx}` (if available)
+  - `final_features_control_noselfcite_combined_y5.{parquet,csv,xlsx}` (if available)
+
+## Optional control merge inputs
+
+When `--control-root` is passed, the pipeline loads control CSVs from this structure:
+
+```text
+control_root/
+  pierre_data/
+    merged_PPP.csv
+    true_merged_PPP.csv
+    merged_PPP_y5.csv
+    true_merged_PPP_y5.csv
+  pierre_data_noselfcite/                 # optional directory
+    merged_PPP_Y0_no_selfcite.csv
+    true_merged_PPP_Y0_no_selfcite.csv
+    merged_PPP_Y5_no_selfcite.csv
+    true_merged_PPP_Y5_no_selfcite.csv
+```
+
+Behavior:
+
+- Files in `pierre_data/` are required when `--control-root` is set.
+- `pierre_data_noselfcite/` and its files are optional; missing optional files are skipped with a warning.
+- Compact features are left-joined to each combined control table by `pair_id`.
 
 ## Standalone repo (using `uv`)
 
